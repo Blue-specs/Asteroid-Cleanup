@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shooter", "shooter\shooter\shooter.csproj", "{D5AF625C-ACF4-4071-823F-E5AB4AF9AE17}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "shooterContent", "shooter\shooterContent\shooterContent.contentproj", "{E8182880-FAF7-4412-9957-51CF86D1401A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5AF625C-ACF4-4071-823F-E5AB4AF9AE17}.Debug|x86.ActiveCfg = Debug|x86
+		{D5AF625C-ACF4-4071-823F-E5AB4AF9AE17}.Debug|x86.Build.0 = Debug|x86
+		{D5AF625C-ACF4-4071-823F-E5AB4AF9AE17}.Release|x86.ActiveCfg = Release|x86
+		{D5AF625C-ACF4-4071-823F-E5AB4AF9AE17}.Release|x86.Build.0 = Release|x86
+		{E8182880-FAF7-4412-9957-51CF86D1401A}.Debug|x86.ActiveCfg = Debug|x86
+		{E8182880-FAF7-4412-9957-51CF86D1401A}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
