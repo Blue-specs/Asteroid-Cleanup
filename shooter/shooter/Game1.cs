@@ -23,12 +23,14 @@ namespace shooter
         public Hline hline;
         public target Target;
         public asteroid ast;
+        public block b;
+        public List<block> junk = new List<block>();
         public List<asteroid> asteroids = new List<asteroid>();
-        public enum gamestate { main, level1, level2, gameover,level3, lost };
+        public enum gamestate { main, level1, level2, gameover,level3,level4, lost };
         public int weaponflag=1;
         Texture2D weapon;
         int countdown;
-        Texture2D shield,shield2;
+        
         Random rand;
         SoundEffect change;
         bool drawn;
@@ -59,6 +61,38 @@ namespace shooter
             asteroids[a].pos.X = x;
             asteroids[a].pos.Y = y;
            
+        }
+        public void deljunk() {
+            for (int i = 0; i < junk.Count; i++)
+            {
+                junk.Remove(junk[i]);
+            }
+        }
+        public void  drawjunk(int a){
+            int x;
+            int y;
+            int alive;
+            
+            Random rand = new Random();
+            for (int i = 0; i < a; i++)
+            {
+
+                b = new block();
+                b.LoadContent();
+                x = rand.Next(0, screenwidth - (Game1.instance.ast.sprite.Width));
+                y = rand.Next(0, screenheight - (Game1.instance.ast.sprite.Height));
+
+                alive = rand.Next(0, 2);
+                b.pos.Y = y;
+                b.pos.X = x;
+
+                if (alive == 1)
+                    b.gonleft = true;
+                else
+                    b.gonleft = false;
+                junk.Add(b);
+            }
+        
         }
         public void drawroids(int a)
         {
@@ -104,7 +138,7 @@ namespace shooter
             weapon= Content.Load<Texture2D>("weapon");
             change = Game1.instance.Content.Load<SoundEffect>("change");   
             
-            shield2 = Content.Load<Texture2D>("shield2");
+            
             vline = new Vline();
             vline.LoadContent();
 
@@ -143,7 +177,7 @@ namespace shooter
             {
                 case gamestate.main:
                     if (keyState.IsKeyDown(Keys.Enter))
-                        currentGameState = gamestate.level1;
+                        currentGameState = gamestate.level4;
                     
                     break;
                 case gamestate.level1:
@@ -165,6 +199,7 @@ namespace shooter
                             asteroids.Remove(asteroids[i]);
                         
                         }
+                    
                     if ((countdown < 0))
                     {
                         currentGameState = gamestate.gameover;
@@ -209,7 +244,8 @@ namespace shooter
                         if (asteroids[i].isalive == false)
                             asteroids.Remove(asteroids[i]);
                         
-                        } if ((countdown < 0))
+                        } 
+                        if ((countdown < 0))
                         currentGameState = gamestate.gameover;
                         
                        
@@ -221,11 +257,11 @@ namespace shooter
                     }
                         break;
                 case gamestate.level3:
-                    if (keyState.IsKeyDown(Keys.P)){
+                    if (keyState.IsKeyDown(Keys.F1)){
                         change.Play();
                     weaponflag = 1;
                     }
-                    if (keyState.IsKeyDown(Keys.O))
+                    if (keyState.IsKeyDown(Keys.F2))
 
                     {
                     weaponflag = 2;
@@ -264,8 +300,67 @@ namespace shooter
                                 asteroids.Remove(asteroids[i]);
 
                         }
-                        if ((countdown < 0) || (asteroids.Count == 0))
-                            currentGameState = gamestate.gameover;
+                        if ((asteroids.Count == 0))
+                        {
+                            currentGameState = gamestate.level4;
+                            drawn = false;
+                            timer = 0;
+                        }
+                        break;
+
+                case gamestate.level4:
+                        if (keyState.IsKeyDown(Keys.F1))
+                        {
+                            change.Play();
+                            weaponflag = 1;
+                        }
+                        if (keyState.IsKeyDown(Keys.F2))
+                        {
+                            weaponflag = 2;
+                            change.Play();
+                        }
+
+                        if (drawn == false)
+                        {
+                            drawroids(20);
+                            drawjunk(8);
+                            drawn = true;
+                            for (int i = 0; i < asteroids.Count; i++)
+                            {
+                                if (asteroids[i].mass > 89)
+                                {
+                                    asteroids[i].sprite = Content.Load<Texture2D>("mass1");
+                                }
+                                else if (asteroids[i].mass > 40)
+                                {
+                                    asteroids[i].sprite = Content.Load<Texture2D>("asteroid");
+                                }
+                                else
+                                {
+                                    asteroids[i].sprite = Content.Load<Texture2D>("mass2");
+                                }
+                            }
+                        }
+                        timer += timeDelta;
+                        countdown = (int)(300000f - timer);
+                        vline.Update(gameTime);
+                        hline.Update(gameTime);
+                        Target.Update(gameTime);
+                        for (int i = 0; i < asteroids.Count; i++)
+                        {
+                            asteroids[i].Update(gameTime);
+                            if (asteroids[i].isalive == false)
+                                asteroids.Remove(asteroids[i]);
+
+                        }
+                        for (int i = 0; i < junk.Count; i++)
+                        {
+                            junk[i].Update(gameTime);
+                        }
+
+                        if ((asteroids.Count == 0))
+                            deljunk();
+                            
                         break;
                 
                 case gamestate.gameover:
@@ -288,7 +383,7 @@ namespace shooter
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.Opaque);
             
            
-                spriteBatch.Draw(background, new Rectangle(0, 0, screenwidth, screenheight), Color.White);
+            spriteBatch.Draw(background, new Rectangle(0, 0, screenwidth, screenheight), Color.White);
             spriteBatch.End();
                 break;
            case gamestate.level1:
@@ -363,7 +458,39 @@ namespace shooter
 
 
             break;
-           
+
+           case gamestate.level4:
+            GraphicsDevice.Clear(Color.White);
+
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+
+            spriteBatch.Draw(background, new Rectangle(0, 0, screenwidth, screenheight), Color.White);
+            if (weaponflag == 1)
+                spriteBatch.Draw(weapon, (new Vector2(screenheight - 300, 10)), Color.Blue);
+            if (weaponflag == 2)
+                spriteBatch.Draw(weapon, (new Vector2(screenheight - 300, 10)), Color.Red);
+            spriteBatch.DrawString(arial, ("Asteroids left " + asteroids.Count), new Vector2(10, 10), Color.Red);
+            spriteBatch.DrawString(arial, ("Time left " + countdown.ToString()), new Vector2((screenwidth - 100), 10), Color.Red);
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+            vline.Draw();
+            hline.Draw();
+            Target.Draw();
+            for (int i = 0; i < junk.Count; i++)
+            {
+                junk[i].Draw();
+            }
+            for (int i = 0; i < asteroids.Count; i++)
+            {
+                asteroids[i].Draw();
+            }
+            
+            spriteBatch.End();
+
+
+
+            break;
             
            
            

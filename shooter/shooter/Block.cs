@@ -27,7 +27,7 @@ namespace shooter
         }
         public override void LoadContent()
         {
-            sprite = Game1.instance.Content.Load<Texture2D>("tank");
+            sprite = Game1.instance.Content.Load<Texture2D>("junkball");
             rec = new Rectangle((int)pos.X - (sprite.Width / 2), (int)pos.Y - (sprite.Height / 2), sprite.Width, sprite.Height);
             
 
